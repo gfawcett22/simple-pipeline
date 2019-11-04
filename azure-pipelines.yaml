@@ -29,6 +29,7 @@ stages:
         displayName: Build server
         inputs:
           repository: $(serverImageName)
+          tags: 'latest'
           command: build
           Dockerfile: server/Dockerfile 
       
@@ -36,6 +37,7 @@ stages:
         displayName: Build app
         inputs:
           repository: $(appImageName)
+          tags: 'latest'
           command: build
           Dockerfile: app/Dockerfile
       
