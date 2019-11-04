@@ -93,7 +93,7 @@ stages:
             - task: HelmDeploy@0
               inputs:
                 connectionType: 'Kubernetes Service Connection'
-                kubernetesServiceConnection: ''
+                kubernetesServiceConnection: 'simple-cluster'
                 namespace: 'simple-pipeline'
                 command: 'install'
                 chartType: 'FilePath'
