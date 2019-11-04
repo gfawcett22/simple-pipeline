@@ -1,0 +1,40 @@
+trigger:
+  - master
+
+pr:
+  - master
+
+variables:
+  serverImageName: 'gfawcett22/simple-pipeline-server'
+  appImageName: 'gfawcett22/simple-pipeline-app'
+
+stages:
+  - stage: CI
+    displayName: CI
+    jobs:
+    - job: CI
+      pool:
+        vmImage: 'Ubuntu-16.04'
+      steps:
+      - task: Docker@2
+        displayName: Build server
+        inputs:
+          repository: $(serverImageName)
+          command: build
+          Dockerfile: server/Dockerfile 
+      
+      - task: Docker@2
+        displayName: Build app
+        inputs:
+          repository: $(appImageName)
+          command: build
+          Dockerfile: app/Dockerfile
+      
+      - script: |
+          docker login -u $(dockerId) -p $(dockerPassword)
+          docker push $(serverImageName):latest
+          docker push $(appImageName):latest
+        displayName: Docker push
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+            
+      
