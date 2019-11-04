@@ -44,7 +44,7 @@ stages:
           docker push $(serverImageName):latest
           docker push $(appImageName):latest
         displayName: Docker push
-        # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
       
       # Copies Helm chart to $(Build.ArtifactStagingDirectory)
       - task: HelmDeploy@0
@@ -62,7 +62,7 @@ stages:
 
   - stage: Deploy
     dependsOn: CI
-#    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
     - deployment: Deploy
       pool:
@@ -88,15 +88,16 @@ stages:
                 echo "##vso[task.setvariable variable=HELM_CHART_PACKAGE]$(find $AGENT_BUILDDIRECTORY/artifacts/simple-pipeline-*.tgz)"
               displayName: Get full path to Helm Chart artifact
 
-            # - task: HelmDeploy@0
-            #   inputs:
-            #     connectionType: 'Kubernetes Service Connection'
-            #     kubernetesServiceConnection: ''
-            #     namespace: 'simple-pipeline'
-            #     command: 'install'
-            #     chartType: 'FilePath'
-            #     chartPath: '$(HELM_CHART_PACKAGE)'
-            #     releaseName: 'simple-pipeline'
-            #   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+            - task: HelmDeploy@0
+              inputs:
+                connectionType: 'Kubernetes Service Connection'
+                kubernetesServiceConnection: ''
+                namespace: 'simple-pipeline'
+                command: 'install'
+                chartType: 'FilePath'
+                chartPath: '$(HELM_CHART_PACKAGE)'
+                releaseName: 'simple-pipeline'
+                overrideValues: 'ingress.enabled=$(ingressEnabled)'
+              condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
             
       

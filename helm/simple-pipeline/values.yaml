@@ -40,8 +40,7 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
-  paths: 
-    - "/*"
+  path: "/*"
 
   tls: []
   #  - secretName: chart-example-tls
