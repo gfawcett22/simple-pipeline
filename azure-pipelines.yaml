@@ -53,6 +53,12 @@ stages:
           chartPath: '$(System.DefaultWorkingDirectory)/helm/simple-pipeline'
           chartVersion: '1.0.0'
         displayName: Package Helm Chart
+      
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+          artifact: 'artifacts'
+        displayName: Publish Pipeline Artifacts in $(Build.ArtifactStagingDirectory)
 
   - stage: Deploy
     dependsOn: CI
